@@ -426,8 +426,16 @@ def run_scraper(brands: list):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="BrandRadar Scraper")
-    parser.add_argument("--brand", type=str, help="Scrape single brand e.g. --brand Safari")
-    parser.add_argument("--reset", action="store_true", help="Reset DB before scraping")
+    parser.add_argument(
+        "--brand",
+        type=str,
+        help="Scrape single brand e.g. --brand Safari"
+    )
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Reset DB before scraping"
+    )
     args = parser.parse_args()
 
     if args.reset:
