@@ -81,13 +81,13 @@ def rainforest_get(params: dict):
             
             if resp.status_code == 429:
                 wait = attempt * 10
-                log(f"⏳ Rate limited (429) — Attempt {attempt}/{MAX_RETRIES} — Waiting {wait}s...", indent=2)
+                log(f"Rate limited (429) — Attempt {attempt}/{MAX_RETRIES} — Waiting {wait}s...", indent=2)
                 time.sleep(wait)
                 continue
                 
             if resp.status_code == 503:
                 wait = attempt * 5
-                log(f"⚠️  Parsing Incident (503) — Attempt {attempt}/{MAX_RETRIES} — Waiting {wait}s...", indent=2)
+                log(f"Parsing Incident (503) — Attempt {attempt}/{MAX_RETRIES} — Waiting {wait}s...", indent=2)
                 time.sleep(wait)
                 continue
                 
@@ -95,21 +95,21 @@ def rainforest_get(params: dict):
             return resp.json()
             
         except requests.exceptions.Timeout:
-            log(f"❌ Timeout — Attempt {attempt}/{MAX_RETRIES}...", indent=2)
+            log(f"Timeout — Attempt {attempt}/{MAX_RETRIES}...", indent=2)
             if attempt == MAX_RETRIES: return None
             time.sleep(2)
         except requests.exceptions.HTTPError as e:
             if resp is not None and resp.status_code not in [429, 503]:
-                log(f"❌ HTTP error: {e}", indent=2)
+                log(f"HTTP error: {e}", indent=2)
                 return None
         except Exception as e:
-            log(f"❌ Error: {e}", indent=2)
+            log(f"Error: {e}", indent=2)
             return None
             
     return None
 
 def search_products(brand: str) -> list:
-    log(f"🔍 Searching products for: {brand}", indent=1)
+    log(f"Searching products for: {brand}", indent=1)
 
     data = rainforest_get({
         "type":              "search",
@@ -119,7 +119,7 @@ def search_products(brand: str) -> list:
     })
 
     if not data or "search_results" not in data:
-        log(f"⚠️  No results for {brand}", indent=2)
+        log(f"No results for {brand}", indent=2)
         return []
 
     products = []
@@ -159,12 +159,12 @@ def search_products(brand: str) -> list:
         if len(products) >= PRODUCTS_PER_BRAND:
             break
 
-    log(f"✅ Found {len(products)} products", indent=2)
+    log(f"Found {len(products)} products", indent=2)
     return products
 
 def fetch_reviews(asin: str, product_title: str) -> list:
     short = product_title[:45] + "..." if len(product_title) > 45 else product_title
-    log(f"📝 Reviews → {short}", indent=2)
+    log(f"Reviews → {short}", indent=2)
 
     collected = []
     page      = 1
@@ -235,7 +235,7 @@ def fetch_reviews(asin: str, product_title: str) -> list:
         time.sleep(REQUEST_DELAY)
 
     result = collected[:REVIEWS_PER_PRODUCT]
-    log(f"✅ {len(result)} real reviews collected", indent=3)
+    log(f"{len(result)} real reviews collected", indent=3)
     return result
 
 def save_brand_to_db(brand_name: str, products: list, all_reviews: dict):
@@ -267,16 +267,16 @@ def save_brand_to_db(brand_name: str, products: list, all_reviews: dict):
             db.add(brand)
             db.commit()
             db.refresh(brand)
-            log(f"💾 Brand saved: {brand_name}", indent=2)
+            log(f"Brand saved: {brand_name}", indent=2)
         else:
-            log(f"📝 Using existing brand: {brand_name}", indent=2)
+            log(f"Using existing brand: {brand_name}", indent=2)
         for p in products:
             existing_product = db.query(models.Product).filter(
                 models.Product.asin == p["asin"]
             ).first()
             
             if existing_product:
-                log(f"⚠️  Product {p['asin']} already in DB — skipping", indent=3)
+                log(f"Product {p['asin']} already in DB — skipping", indent=3)
                 continue
 
             reviews     = all_reviews.get(p["asin"], [])
@@ -316,7 +316,7 @@ def save_brand_to_db(brand_name: str, products: list, all_reviews: dict):
                 ))
 
             db.commit()
-            log(f"💾 Product: {p['title'][:50]}...", indent=3)
+            log(f"Product: {p['title'][:50]}...", indent=3)
         all_prods = db.query(models.Product).filter(models.Product.brand_id == brand.id).all()
         if all_prods:
             prices    = [p.price for p in all_prods if p.price is not None and p.price > 0]
@@ -334,29 +334,29 @@ def save_brand_to_db(brand_name: str, products: list, all_reviews: dict):
             brand.sentiment_score = float(round(sum(scores) / len(scores), 4)) if scores else 0.0
             
             db.commit()
-            log(f"🔄 Brand metrics updated for {brand_name}", indent=2)
+            log(f"Brand metrics updated for {brand_name}", indent=2)
 
     except Exception as e:
         db.rollback()
-        log(f"❌ DB error: {e}", indent=2)
+        log(f"DB error: {e}", indent=2)
         raise
     finally:
         db.close()
 
 def reset_database():
-    log("🗑️  Resetting database...")
+    log("Resetting database...")
     models.Base.metadata.drop_all(bind=engine)
     models.Base.metadata.create_all(bind=engine)
-    log("✅ Database reset complete")
+    log("Database reset complete")
 
 
 def run_scraper(brands: list):
-    print("\n" + "═" * 56)
-    print("  🧳  BrandRadar — Amazon India Luggage Intelligence")
-    print("═" * 56)
+    print("\n" + "=" * 56)
+    print("  BrandRadar — Amazon India Luggage Intelligence")
+    print("=" * 56)
 
     if not API_KEY or API_KEY == "YOUR_API_KEY_HERE":
-        print("\n❌ ERROR: API key missing!")
+        print("\nERROR: API key missing!")
         print("   Edit scraper/.env and set:")
         print("   RAINFOREST_API_KEY=your_actual_key\n")
         return
@@ -377,51 +377,55 @@ def run_scraper(brands: list):
                 ).scalar()
                 
                 if count >= PRODUCTS_PER_BRAND:
-                    log(f"✅ {brand} has {count} products — skipping", indent=1)
+                    log(f"{brand} has {count} products — skipping", indent=1)
                     continue
                 else:
-                    log(f"🔄 {brand} only has {count}/{PRODUCTS_PER_BRAND} products — continuing collection", indent=1)
+                    log(f"{brand} only has {count}/{PRODUCTS_PER_BRAND} products — continuing collection", indent=1)
 
-            print(f"\n{'─' * 56}")
-            print(f"  🏷️  {brand.upper()}")
-            print(f"{'─' * 56}")
+            print(f"\n{'- ' * 28}")
+            print(f"  {brand.upper()}")
+            print(f"{'- ' * 28}")
 
             products = search_products(brand)
             total_requests += 1
 
             if not products:
-                log(f"⚠️  Skipping {brand}", indent=1)
+                log(f"Skipping {brand}", indent=1)
                 continue
 
             all_reviews = {}
             for i, product in enumerate(products, 1):
                 existing = db.query(models.Product).filter(models.Product.asin == product["asin"]).first()
                 if existing:
-                    log(f"[{i}/{len(products)}] ⚠️  Product {product['asin']} already in DB — skipping reviews", indent=1)
+                    log(
+                        f"[{i}/{len(products)}] Product {product['asin']} already in DB "
+                        f"— skipping reviews",
+                        indent=1
+                    )
                     continue
 
                 log(f"[{i}/{len(products)}]", indent=1)
                 reviews = fetch_reviews(product["asin"], product["title"])
                 all_reviews[product["asin"]] = reviews
                 total_requests += 1
-                total_reviews  += len(reviews)
+                total_reviews += len(reviews)
                 time.sleep(REQUEST_DELAY)
 
             save_brand_to_db(brand, products, all_reviews)
             total_products += len(products)
-            log(f"✅ {brand} complete!", indent=1)
+            log(f"{brand} complete!", indent=1)
             time.sleep(2)
     finally:
         db.close()
 
-    print("\n" + "═" * 56)
-    print("  🎉  Done!")
-    print(f"  📦  Brands   : {len(brands)}")
-    print(f"  🛍️   Products : {total_products}")
-    print(f"  💬  Reviews  : {total_reviews}")
-    print(f"  🌐  API calls: {total_requests}")
-    print(f"  💾  DB file  : luggage_intel.db")
-    print("═" * 56 + "\n")
+    print("\n" + "=" * 56)
+    print("  Done!")
+    print(f"  Brands   : {len(brands)}")
+    print(f"  Products : {total_products}")
+    print(f"  Reviews  : {total_reviews}")
+    print(f"  API calls: {total_requests}")
+    print(f"  DB file  : luggage_intel.db")
+    print("=" * 56 + "\n")
 
 
 if __name__ == "__main__":
