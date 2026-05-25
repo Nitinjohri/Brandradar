@@ -43,14 +43,17 @@ def call_ollama(prompt: str) -> str:
         response.raise_for_status()
         return response.json().get("response", "").strip()
     except requests.RequestException as e:
-        return f"Ollama error: {str(e)}"
+        return (
+            f"Ollama error: {str(e)}"
+        )
 
 
 def extract_themes(brand_name: str, reviews: list[str], sentiment: str) -> list[str]:
     sample = reviews[:30]
     reviews_text = "\n".join([f"- {r}" for r in sample])
 
-    prompt = f"""
+    prompt = (
+        f"""
 You are analyzing customer reviews for the luggage brand "{brand_name}" on Amazon India.
 
 Here are {sentiment} customer reviews:
@@ -61,6 +64,7 @@ Return ONLY a JSON array of 5 short theme strings.
 Example: ["wheels broke easily", "zipper quality poor", "handle loose"]
 Return only the JSON array, nothing else.
 """
+    )
     raw = call_ollama(prompt)
 
     try:
@@ -85,9 +89,10 @@ def generate_brand_insights(
     sentiment_score: float,
     top_complaints: list[str],
     top_praises: list[str]
-) -> str:
+) -> list[str]:
 
-    prompt = f"""
+    prompt = (
+        f"""
 You are a competitive intelligence analyst for Amazon India luggage market.
 
 Brand: {brand_name}
@@ -103,6 +108,7 @@ Focus on: hidden quality issues, pricing strategy red flags, or genuine strength
 Keep each insight to 1-2 sentences.
 Return ONLY a JSON array of 3 insight strings.
 """
+    )
     raw = call_ollama(prompt)
 
     try:
@@ -126,7 +132,8 @@ def generate_market_insights(brands_summary: list[dict]) -> list[dict]:
         for b in brands_summary
     ])
 
-    prompt = f"""
+    prompt = (
+        f"""
 You are a competitive intelligence analyst for Amazon India luggage market.
 
 Here is a summary of luggage brands:
@@ -139,6 +146,7 @@ Return ONLY a JSON array of 5 objects.
 Example: [{{"brand": "Safari", "insight": "..."}}, {{"brand": "VIP", "insight": "..."}}]
 Return only the JSON array, nothing else.
 """
+    )
     raw = call_ollama(prompt)
 
     try:
@@ -151,7 +159,10 @@ Return only the JSON array, nothing else.
         if isinstance(insights, list):
             final_insights = []
             for i in insights:
-                if isinstance(i, str) and (i.strip().startswith('{') or i.strip().startswith('[')):
+                if (
+                    isinstance(i, str)
+                    and (i.strip().startswith('{') or i.strip().startswith('['))
+                ):
                     try:
                         parsed = json.loads(i)
                         if isinstance(parsed, dict):

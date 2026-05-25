@@ -61,8 +61,8 @@ class Review(Base):
     verified_purchase: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     review_date: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-            DateTime, default=datetime.utcnow
-        )
+        DateTime, default=datetime.utcnow
+    )
 
     product: Mapped["Product"] = relationship(back_populates="reviews")
 
@@ -75,6 +75,6 @@ class AgentInsight(Base):
     insight_type: Mapped[str] = mapped_column(String)
     insight_text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
-            DateTime, default=datetime.utcnow
-        )
+        DateTime, default=datetime.utcnow
+    )
 

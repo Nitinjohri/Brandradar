@@ -57,22 +57,28 @@ def compare_brands(db: Session = Depends(get_db)):
             models.Review.product_id.in_(product_ids)
         ).all()
 
-        positive_reviews = [str(r.body) for r in reviews if r.sentiment_label == "positive"]
-        negative_reviews = [str(r.body) for r in reviews if r.sentiment_label == "negative"]
+        positive_reviews = [
+            str(r.body) for r in reviews if r.sentiment_label == "positive"
+        ]
+        negative_reviews = [
+            str(r.body) for r in reviews if r.sentiment_label == "negative"
+        ]
 
         pros = extract_themes(str(brand.name), positive_reviews, "positive")
         cons = extract_themes(str(brand.name), negative_reviews, "negative")
 
-        result.append(schemas.BrandComparison(
-            brand_name=str(brand.name),
-            avg_price=float(brand.avg_price),
-            avg_discount=float(brand.avg_discount),
-            avg_rating=float(brand.avg_rating),
-            total_reviews=int(brand.total_reviews),
-            sentiment_score=float(brand.sentiment_score),
-            top_pros=pros,
-            top_cons=cons,
-        ))
+        result.append(
+            schemas.BrandComparison(
+                brand_name=str(brand.name),
+                avg_price=float(brand.avg_price),
+                avg_discount=float(brand.avg_discount),
+                avg_rating=float(brand.avg_rating),
+                total_reviews=int(brand.total_reviews),
+                sentiment_score=float(brand.sentiment_score),
+                top_pros=pros,
+                top_cons=cons,
+            )
+        )
 
     return result
 
@@ -85,5 +91,4 @@ def get_brand(brand_name: str, db: Session = Depends(get_db)):
 
     if not brand:
         raise HTTPException(status_code=404, detail="Brand not found")
-
     return brand

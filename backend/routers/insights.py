@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from ..Database import get_db
-from .. import models,schemas
+from .. import models, schemas
 from ..agents.ollama import (
     generate_brand_insights,
     generate_market_insights,

@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 import argparse
 import requests
@@ -11,9 +10,9 @@ from backend import models
 from sqlalchemy import func
 
 load_dotenv()
-API_KEY         = os.getenv("RAINFOREST_API_KEY")
-AMAZON_DOMAIN   = os.getenv("AMAZON_DOMAIN", "amazon.in")
-BASE_URL        = "https://api.rainforestapi.com/request"
+API_KEY = os.getenv("RAINFOREST_API_KEY")
+AMAZON_DOMAIN = os.getenv("AMAZON_DOMAIN", "amazon.in")
+BASE_URL = "https://api.rainforestapi.com/request"
 
 BRANDS = [
     "Safari",
@@ -22,10 +21,10 @@ BRANDS = [
     "VIP",
 ]
 
-PRODUCTS_PER_BRAND  = 10
+PRODUCTS_PER_BRAND = 10
 REVIEWS_PER_PRODUCT = 50
-REQUEST_DELAY       = 1.5
-MAX_RETRIES         = 3
+REQUEST_DELAY = 1.5
+MAX_RETRIES = 3
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -71,7 +70,7 @@ def detect_category(title: str) -> str:
     return "general"
 
 def rainforest_get(params: dict):
-    params["api_key"]       = API_KEY
+    params["api_key"] = API_KEY
     params["amazon_domain"] = AMAZON_DOMAIN
     
     resp = None
@@ -112,9 +111,9 @@ def search_products(brand: str) -> list:
     log(f"Searching products for: {brand}", indent=1)
 
     data = rainforest_get({
-        "type":              "search",
-        "search_term":       f"{brand} luggage trolley bag",
-        "sort_by":           "featured",
+        "type": "search",
+        "search_term": f"{brand} luggage trolley bag",
+        "sort_by": "featured",
         "exclude_sponsored": "true",
     })
 

@@ -14,6 +14,8 @@ class ReviewBase(BaseModel):
     verified_purchase: Optional[str]
     review_date: Optional[str]
 
+  
+
 class ReviewOut(ReviewBase):
     id: int
     product_id: int
@@ -35,6 +37,8 @@ class ProductBase(BaseModel):
     product_url: Optional[str]
     sentiment_score: float
 
+  
+
 class ProductOut(ProductBase):
     id: int
     brand_id: int
@@ -42,12 +46,15 @@ class ProductOut(ProductBase):
     class Config:
         from_attributes = True
 
+  
+
 class ProductWithReviews(ProductOut):
     reviews: List[ReviewOut] = []
 
-    class Config:
-        from_attributes = True
+    # Inherits Config from ProductOut
 
+
+  
 
 class BrandBase(BaseModel):
     name: str
@@ -56,6 +63,8 @@ class BrandBase(BaseModel):
     avg_rating: float
     total_reviews: int
     sentiment_score: float
+
+  
 
 class BrandOut(BrandBase):
     id: int
@@ -66,8 +75,7 @@ class BrandOut(BrandBase):
 class BrandWithProducts(BrandOut):
     products: List[ProductOut] = []
 
-    class Config:
-        from_attributes = True
+    # Inherits Config from BrandOut
 
 
 class BrandComparison(BaseModel):
