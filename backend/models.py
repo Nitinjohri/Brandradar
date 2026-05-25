@@ -9,15 +9,15 @@ class Brand(Base):
     __tablename__ = "brands"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-        name: Mapped[str] = mapped_column(String, unique=True, index=True)
-        avg_price: Mapped[float] = mapped_column(Float, default=0.0)
-        avg_discount: Mapped[float] = mapped_column(Float, default=0.0)
-        avg_rating: Mapped[float] = mapped_column(Float, default=0.0)
-        total_reviews: Mapped[int] = mapped_column(Integer, default=0)
-        sentiment_score: Mapped[float] = mapped_column(Float, default=0.0)
-        created_at: Mapped[datetime] = mapped_column(
-            DateTime, default=datetime.utcnow
-        )
+    name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    avg_price: Mapped[float] = mapped_column(Float, default=0.0)
+    avg_discount: Mapped[float] = mapped_column(Float, default=0.0)
+    avg_rating: Mapped[float] = mapped_column(Float, default=0.0)
+    total_reviews: Mapped[int] = mapped_column(Integer, default=0)
+    sentiment_score: Mapped[float] = mapped_column(Float, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow
+    )
 
     products: Mapped[List["Product"]] = relationship(back_populates="brand")
 
@@ -35,10 +35,10 @@ class Product(Base):
     rating: Mapped[float] = mapped_column(Float)
     review_count: Mapped[int] = mapped_column(Integer)
     category: Mapped[str] = mapped_column(String)
-        image_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-        product_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-        sentiment_score: Mapped[float] = mapped_column(Float, default=0.0)
-        created_at: Mapped[datetime] = mapped_column(
+    image_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    product_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    sentiment_score: Mapped[float] = mapped_column(Float, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(
             DateTime, default=datetime.utcnow
         )
 
@@ -60,7 +60,7 @@ class Review(Base):
     sentiment_label: Mapped[str] = mapped_column(String, default="neutral")
     verified_purchase: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     review_date: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-        created_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(
             DateTime, default=datetime.utcnow
         )
 
@@ -74,7 +74,7 @@ class AgentInsight(Base):
     brand_name: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     insight_type: Mapped[str] = mapped_column(String)
     insight_text: Mapped[str] = mapped_column(Text)
-        created_at: Mapped[datetime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(
             DateTime, default=datetime.utcnow
         )
 
