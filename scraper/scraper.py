@@ -287,34 +287,32 @@ def save_brand_to_db(brand_name: str, products: list, all_reviews: dict):
                 brand_id         = brand.id,
                 asin             = p["asin"],
                 title            = p["title"],
-                price            = p["price"],
-                original_price   = p["original_price"],
-                discount_percent = p["discount_percent"],
-                rating           = p["rating"],
-                review_count     = p["review_count"],
-                category         = p["category"],
-                image_url        = p["image_url"],
-                product_url      = p["product_url"],
-                sentiment_score  = p_sentiment,
+                price=p["price"],
+                original_price=p["original_price"],
+                discount_percent=p["discount_percent"],
+                rating=p["rating"],
+                review_count=p["review_count"],
+                category=p["category"],
+                image_url=p["image_url"],
+                product_url=p["product_url"],
+                sentiment_score=p_sentiment,
             )
             db.add(product)
             db.commit()
             db.refresh(product)
-
             for r in reviews:
                 db.add(models.Review(
-                    product_id        = product.id,
-                    asin              = r["asin"],
-                    reviewer_name     = r["reviewer_name"],
-                    rating            = r["rating"],
-                    title             = r["title"],
-                    body              = r["body"],
-                    sentiment_score   = r["sentiment_score"],
-                    sentiment_label   = r["sentiment_label"],
-                    verified_purchase = r["verified_purchase"],
-                    review_date       = r["review_date"],
+                    product_id=product.id,
+                    asin=r["asin"],
+                    reviewer_name=r["reviewer_name"],
+                    rating=r["rating"],
+                    title=r["title"],
+                    body=r["body"],
+                    sentiment_score=r["sentiment_score"],
+                    sentiment_label=r["sentiment_label"],
+                    verified_purchase=r["verified_purchase"],
+                    review_date=r["review_date"],
                 ))
-
             db.commit()
             log(f"Product: {p['title'][:50]}...", indent=3)
         all_prods = db.query(models.Product).filter(models.Product.brand_id == brand.id).all()

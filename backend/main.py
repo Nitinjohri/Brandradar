@@ -9,7 +9,10 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Luggage Intelligence API",
-    description="Competitive intelligence dashboard for luggage brands on Amazon India",
+    description=(
+        "Competitive intelligence dashboard for luggage brands on "
+        "Amazon India"
+    ),
     version="1.0.0"
 )
 

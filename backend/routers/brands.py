@@ -28,9 +28,15 @@ def get_dashboard_overview(db: Session = Depends(get_db)):
         total_brands=len(brands),
         total_products=len(products),
         total_reviews=len(reviews),
-        avg_sentiment=float(round(sum(b.sentiment_score for b in brands) / len(brands), 4)),
-        avg_price=float(round(sum(b.avg_price for b in brands) / len(brands), 2)),
-        avg_discount=float(round(sum(b.avg_discount for b in brands) / len(brands), 2)),
+        avg_sentiment=float(
+            round(sum(b.sentiment_score for b in brands) / len(brands), 4)
+        ),
+        avg_price=float(
+            round(sum(b.avg_price for b in brands) / len(brands), 2)
+        ),
+        avg_discount=float(
+            round(sum(b.avg_discount for b in brands) / len(brands), 2)
+        ),
     )
 
 

@@ -42,7 +42,7 @@ def call_ollama(prompt: str) -> str:
         )
         response.raise_for_status()
         return response.json().get("response", "").strip()
-    except Exception as e:
+    except requests.RequestException as e:
         return f"Ollama error: {str(e)}"
 
 
@@ -95,8 +95,8 @@ Average Price: ₹{avg_price}
 Average Discount: {avg_discount}%
 Average Rating: {avg_rating}/5
 Sentiment Score: {sentiment_score} (scale -1 to +1)
-Top Customer Complaints: {", ".join(top_complaints)}
-Top Customer Praises: {", ".join(top_praises)}
+Top Customer Complaints: {', '.join(top_complaints)}
+Top Customer Praises: {', '.join(top_praises)}
 
 Give 3 non-obvious business insights about this brand.
 Focus on: hidden quality issues, pricing strategy red flags, or genuine strengths.
@@ -133,7 +133,7 @@ Here is a summary of luggage brands:
 {summary_text}
 
 Generate 5 non-obvious market insights.
-For each insight, identify which specific brand it primarily concerns. 
+For each insight, identify which specific brand it primarily concerns.
 
 Return ONLY a JSON array of 5 objects.
 Example: [{{"brand": "Safari", "insight": "..."}}, {{"brand": "VIP", "insight": "..."}}]
@@ -156,7 +156,7 @@ Return only the JSON array, nothing else.
                         parsed = json.loads(i)
                         if isinstance(parsed, dict):
                             i = parsed
-                    except:
+                    except Exception:
                         pass
 
                 if isinstance(i, dict) and 'brand' in i and 'insight' in i:
