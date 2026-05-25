@@ -50,7 +50,9 @@ def call_ollama(prompt: str) -> str:
 
 def extract_themes(brand_name: str, reviews: list[str], sentiment: str) -> list[str]:
     sample = reviews[:30]
-    reviews_text = "\n".join([f"- {r}" for r in sample])
+    reviews_text = "\n".join([
+        f"- {r}" for r in sample
+    ])
 
     prompt = (
         f"""
@@ -127,8 +129,10 @@ Return ONLY a JSON array of 3 insight strings.
 
 def generate_market_insights(brands_summary: list[dict]) -> list[dict]:
     summary_text = "\n".join([
-        f"- {b['name']}: price ₹{b['avg_price']}, discount {b['avg_discount']}%, "
-        f"rating {b['avg_rating']}, sentiment {b['sentiment_score']}"
+        (
+            f"- {b['name']}: price ₹{b['avg_price']}, discount {b['avg_discount']}%, "
+            f"rating {b['avg_rating']}, sentiment {b['sentiment_score']}"
+        )
         for b in brands_summary
     ])
 
