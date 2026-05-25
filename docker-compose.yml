@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: brandradar_backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/data.db:/app/backend/data.db
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: brandradar_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

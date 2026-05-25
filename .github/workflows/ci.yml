@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:20.10.16-dind
+        options: --privileged
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install backend dependencies
+        run: |
+          pip install -r requirement.txt
+
+      - name: Lint backend Python code
+        run: |
+          pip install flake8
+          flake8 backend/ scraper/
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+
+      - name: Run backend tests
+        run: |
+          if [ -d backend/tests ]; then pytest backend/tests; else echo "No backend tests found."; fi
+
+      - name: Run scraper
+        run: |
+          python scraper/scraper.py || echo "Scraper run failed."
+
+      - name: Build and run Docker Compose
+        run: |
+          docker-compose up --build -d
+          sleep 10
+          docker-compose ps
+
+      - name: Check backend health
+        run: |
+          curl --fail http://localhost:5000/docs || (docker-compose logs && exit 1)
+
+      - name: Check frontend health
+        run: |
+          curl --fail http://localhost || (docker-compose logs && exit 1)
