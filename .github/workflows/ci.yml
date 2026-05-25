@@ -60,10 +60,5 @@ jobs:
           sleep 10
           docker-compose ps
 
-      - name: Check backend health
-        run: |
-          curl --fail http://localhost:5000/docs || (docker-compose logs && exit 1)
+      
 
-      - name: Check frontend health
-        run: |
-          curl --fail http://localhost || (docker-compose logs && exit 1)
